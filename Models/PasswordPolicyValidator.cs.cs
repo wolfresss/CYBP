@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
 
+
 namespace CYBP.Models;
 
 public static class PasswordPolicyValidator
