@@ -1,0 +1,24 @@
+{
+  "profiles": {
+    "http": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "dotnetRunMessages": true,
+      "applicationUrl": "http://localhost:5115"
+    },
+    "https": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "CYBPP": "CYBPP1v+CYBPP1v+"
+      },
+      "dotnetRunMessages": true,
+      "applicationUrl": "https://localhost:7257;http://localhost:5115"
+    }
+  },
+  "$schema": "https://json.schemastore.org/launchsettings.json"
+}

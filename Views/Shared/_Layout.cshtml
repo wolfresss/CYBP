@@ -1,0 +1,145 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using CYBP.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - CYBP</title>
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/CYBP.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">CYBP</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        </li>
+
+                        @if (User.IsInRole("Administrator"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link"
+                                   asp-controller="Admin"
+                                   asp-action="Index">
+                                    Panel administratora
+                                </a>
+                            </li>
+                        }
+
+
+
+                    </ul>
+                    <partial name="_LoginPartial" />
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2026 - CYBP - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+
+
+    
+    <script>
+            (() => {
+                const countdown = document.getElementById("sessionCountdown");
+                const isLoggedIn = document.querySelector(
+                    'a[href*="Logout"], form[action*="Logout"]'
+                );
+
+                // Uruchamiamy licznik tylko na stronie Home,
+                // gdy element licznika jest widoczny.
+                if (!countdown) return;
+
+                let remaining = 60;
+                let lastPing = 0;
+                let loggingOut = false;
+
+                async function keepAlive() {
+                    const now = Date.now();
+
+                    if (now - lastPing < 20000) return;
+                    lastPing = now;
+
+                    try {
+                        await fetch('/Home/KeepAlive', {
+                            method: 'POST',
+                            credentials: 'same-origin'
+                        });
+                    } catch (error) {
+                        console.error('Nie udało się odświeżyć sesji.', error);
+                    }
+                }
+
+                function resetTimer() {
+                    if (loggingOut) return;
+                    remaining = 60;
+                    countdown.textContent = remaining;
+                    keepAlive();
+                }
+
+                const activityEvents = [
+                    'mousemove', 'keydown', 'click',
+                    'scroll', 'touchstart'
+                ];
+
+                activityEvents.forEach(eventName => {
+                    document.addEventListener(eventName, resetTimer, {
+                        passive: true
+                    });
+                });
+
+                const timer = setInterval(async () => {
+                    if (loggingOut) return;
+
+                    remaining--;
+                    countdown.textContent = remaining;
+
+                    if (remaining <= 0) {
+                        loggingOut = true;
+                        clearInterval(timer);
+
+                        try {
+                            await fetch('/Home/IdleLogout', {
+                                method: 'POST',
+                                credentials: 'same-origin'
+                            });
+                        } finally {
+                            window.location.href = '/Identity/Account/Login';
+                        }
+                    }
+                }, 1000);
+            })();
+    </script>
+</body>
+
+</html>

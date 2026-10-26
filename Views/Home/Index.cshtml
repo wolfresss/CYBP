@@ -1,0 +1,44 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>  <a href="https://learn.microsoft.com/aspnet/core"> </a>.</p>
+</div>
+<div>
+
+    
+@if (User.IsInRole("Administrator"))
+{
+    <h2>Lista adresów e-mail użytkowników</h2>
+
+    @if (ViewBag.UserEmails != null && ViewBag.UserEmails.Count > 0)
+    {
+        <ol>
+            @foreach (string email in ViewBag.UserEmails)
+            {
+                <li>@email</li>
+            }
+        </ol>
+    }
+    else
+    {
+        <p>Brak adresów e-mail do wyświetlenia.</p>
+    }
+}
+else
+{
+    <p>Brak autoryzacji do listy użytkowników.</p>
+}
+
+@if (User.Identity?.IsAuthenticated == true)
+{
+    <div class="alert alert-info">
+        Pozostały czas sesji:
+        <strong><span id="sessionCountdown">60</span> s</strong>
+    </div>
+}
+
+
+</div>

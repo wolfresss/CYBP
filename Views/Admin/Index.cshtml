@@ -1,0 +1,84 @@
+﻿
+@model List<CYBP.Controllers.AdminUserListItem>
+
+@{
+    ViewData["Title"] = "Panel administratora";
+}
+
+<h1>Panel administratora</h1>
+
+@if (TempData["Message"] is string message)
+{
+    <div class="alert alert-info">@message</div>
+}
+
+<p>
+    <a asp-controller="Admin"
+       asp-action="Create"
+       class="btn btn-primary">
+        Dodaj użytkownika
+    </a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Login</th>
+            <th>E-mail</th>
+            <th>Rola</th>
+            <th>Status</th>
+            <th>Akcje</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var user in Model)
+    {
+        <tr>
+            <td>@user.UserName</td>
+            <td>@user.Email</td>
+            <td>@user.Role</td>
+            <td>
+                @if (user.IsActive)
+                {
+                    <span class="text-success">Aktywne</span>
+                }
+                else
+                {
+                    <span class="text-danger">Zablokowane</span>
+                }
+            </td>
+            <td>
+                <a asp-action="Edit"
+                   asp-route-id="@user.Id"
+                   class="btn btn-sm btn-warning">
+                    Edytuj
+                </a>
+
+                <form asp-action="ToggleBlock"
+                      asp-route-id="@user.Id"
+                      method="post"
+                      class="d-inline">
+                    <button type="submit"
+                            class="btn btn-sm btn-secondary">
+                        @(user.IsActive ? "Zablokuj" : "Odblokuj")
+                    </button>
+                </form>
+                
+                <form asp-action="Delete"
+                      asp-route-id="@user.Id"
+                      method="post"
+                      class="d-inline"
+                      onsubmit="return confirm('Czy na pewno usunąć tego użytkownika?');">
+                    <button type="submit" class="btn btn-sm btn-danger">
+                        Usuń
+                    </button>
+                </form>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<p>
+    <a asp-controller="Home" asp-action="Index">Powrót do Home</a>
+</p>

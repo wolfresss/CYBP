@@ -1,0 +1,40 @@
+﻿
+@model CYBP.Models.AdminCreateUserViewModel
+
+@{
+    ViewData["Title"] = "Dodaj użytkownika";
+}
+
+<h1>Dodaj użytkownika</h1>
+
+<form asp-action="Create" method="post">
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="UserName" class="form-label">Login</label>
+        <input asp-for="UserName" class="form-control" />
+        <span asp-validation-for="UserName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label">E-mail</label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Password" class="form-label">Hasło początkowe</label>
+        <input asp-for="Password" class="form-control" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Role" class="form-label">Rola</label>
+        <select asp-for="Role" asp-items="ViewBag.Roles"
+                class="form-select"></select>
+        <span asp-validation-for="Role" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Utwórz konto</button>
+    <a asp-action="Index" class="btn btn-secondary">Anuluj</a>
+</form>
